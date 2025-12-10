@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Main container */
+.home-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f4f6f8;
+  padding-bottom: 30px;
+}
+
+/* Center loading spinner */
+.loading-at-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+/* Page Titles */
+h2 {
+  font-size: 28px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 20px;
+  color: #222;
+}
+
+h3 {
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #444;
+}
+
+/* PROJECT LIST GRID */
+ul {
+  list-style: none;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 1200px;
+}
+
+/* Project Card */
+.project-block {
+  background-color: #fff;
+  padding: 16px;
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+  transition: 0.25s ease;
+  cursor: pointer;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.05);
+  max-width: 100%;
+}
+
+.project-block:hover {
+  transform: translateY(-4px);
+  box-shadow: 0px 6px 16px rgba(0,0,0,0.08);
+}
+
+/* INNER TEXT */
+.project-link {
+  text-decoration: none;
+  color: #222;
+}
+
+.li-name {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.li-budget,
+.li-spent,
+.li-progress,
+.li-status {
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #555;
+}
+
+/* ====================== RESPONSIVE BREAKPOINTS ====================== */
+
+/* Tablets & small laptops */
+@media (max-width: 1024px) {
+  ul {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 10px 16px;
+    gap: 14px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  ul {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  h2 { font-size: 24px; }
+}
+
+/* Large Mobile */
+@media (max-width: 600px) {
+  ul {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 10px;
+    max-width: 420px;       /* Prevents huge card size */
+  }
+
+  .project-block {
+    padding: 14px;
+    width: 100%;
+  }
+
+  .li-name { font-size: 16px; }
+  .li-budget,
+  .li-spent,
+  .li-progress,
+  .li-status {
+    font-size: 13px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 430px) {
+  .project-block {
+    padding: 12px;
+    max-width: 350px;      /* keeps card small */
+    margin: 0 auto;
+  }
+
+  h2 { font-size: 20px; }
+  h3 { font-size: 16px; }
+}
+.btn-delete{
+  background-color: transparent;
+  border: none;
+  width: 100%;
+}
+
+.dlete-line{
+  border-style: solid;
+  border-color: red;
+  border-width: 1px;
+  padding: 5px;
+}
+
+/* ==================== No Projects View Styling ==================== */
+
+.no-projects-view {
+  width: 100%;
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 25px;
+  background-color: #f4f6f8;
+}
+
+.no-projects-heading {
+  font-size: 28px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.no-projects-description {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+  max-width: 420px;
+}
+
+.add-project-button {
+  padding: 12px 22px;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.add-project-button:hover {
+  background-color: #1e4fc2;
+  transform: translateY(-2px);
+}
+
+/* ===================== RESPONSIVE BREAKPOINTS ===================== */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .no-projects-heading {
+    font-size: 24px;
+  }
+  .no-projects-description {
+    font-size: 15px;
+    max-width: 380px;
+  }
+}
+
+/* Large Mobile */
+@media (max-width: 600px) {
+  .no-projects-heading {
+    font-size: 22px;
+  }
+  .no-projects-description {
+    font-size: 14px;
+  }
+  .add-project-button {
+    padding: 11px 18px;
+    font-size: 15px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 430px) {
+  .no-projects-heading {
+    font-size: 20px;
+  }
+  .no-projects-description {
+    font-size: 13px;
+  }
+  .add-project-button {
+    width: 100%;
+    max-width: 250px;
+    padding: 10px 0;
+  }
+}

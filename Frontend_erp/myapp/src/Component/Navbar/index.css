@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+.btn-logout{
+  background-color: transparent;
+  border:none;
+  text-decoration: none;
+  color: #2563eb;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.25s;
+}
+
+
+/* Navbar Container */
+.navbar {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 14px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e6e6e6;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Brand Title */
+.navbar h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* Nav Links Container */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+/* Individual Link Style */
+.nav-link {
+  text-decoration: none;
+  color: #2563eb;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.25s;
+}
+
+.nav-link:hover {
+  color: #1e4fc2;
+}
+
+/* ===================== RESPONSIVE BREAKPOINTS ===================== */
+
+/* Tablets (≤ 768px) */
+@media screen and (max-width: 768px) {
+  .navbar {
+    padding: 12px 20px;
+  }
+  .navbar h3 {
+    font-size: 18px;
+  }
+  .nav-links {
+    gap: 18px;
+  }
+}
+
+/* Large Phones (≤ 600px) */
+@media screen and (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+
+  .nav-links {
+    gap: 14px;
+  }
+}
+
+/* Small Phones (≤ 430px) */
+@media screen and (max-width: 430px) {
+  .navbar h3 {
+    font-size: 16px;
+  }
+
+  .nav-link {
+    font-size: 15px;
+  }
+}

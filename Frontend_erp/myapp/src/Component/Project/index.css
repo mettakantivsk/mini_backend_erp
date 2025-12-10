@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+.d-last{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.btnn-edit{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.project-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f4f6f8;
+  padding-bottom: 40px;
+}
+
+/* Center loading spinner */
+.loading-at-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+/* Page Title */
+.Risk-management h2 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #222;
+  text-align: center;
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+/* Project details card */
+.project-details {
+  background-color: #fff;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 25px;
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  box-shadow: 0px 4px 14px rgba(0,0,0,0.06);
+  transition: 0.3s;
+}
+
+.project-details:hover {
+  box-shadow: 0px 6px 18px rgba(0,0,0,0.10);
+}
+
+/* Text styles inside card */
+.li-name {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.li-budget,
+.li-spent,
+.li-progress,
+.li-status {
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+
+/* ===================== RESPONSIVE BREAKPOINTS ===================== */
+
+/* Tablets & small laptops */
+@media (max-width: 1024px) {
+  .project-details {
+    max-width: 520px;
+  }
+  .Risk-management h2 {
+    font-size: 26px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  .project-details {
+    max-width: 90%;
+    padding: 18px;
+  }
+  .Risk-management h2 {
+    font-size: 24px;
+  }
+  .li-name {
+    font-size: 18px;
+  }
+  .li-budget,
+  .li-spent,
+  .li-progress,
+  .li-status {
+    font-size: 15px;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 600px) {
+  .project-details {
+    max-width: 95%;
+    padding: 16px;
+  }
+  .Risk-management h2 {
+    font-size: 22px;
+    margin-top: 18px;
+  }
+  .li-name {
+    font-size: 17px;
+  }
+  .li-budget,
+  .li-spent,
+  .li-progress,
+  .li-status {
+    font-size: 14px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 430px) {
+  .project-details {
+    padding: 14px;
+    border-radius: 10px;
+  }
+  .Risk-management h2 {
+    font-size: 20px;
+  }
+}

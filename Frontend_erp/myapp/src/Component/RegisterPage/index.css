@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+.login-page-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #f4f6f8;
+  padding: 20px;
+}
+
+/* Headings */
+.heading-login {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #222;
+  text-align: center;
+}
+
+.welcome-text {
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 25px;
+  color: #555;
+  text-align: center;
+}
+
+/* Card */
+.login-card {
+  width: 360px;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  border: 1px solid #e1e1e1;
+  box-shadow: 0px 4px 18px rgba(0,0,0,0.06);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Labels */
+label {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 5px;
+  margin-top: 10px;
+}
+
+/* Inputs */
+.email,
+.password {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #cfcfcf;
+  font-size: 15px;
+  margin-bottom: 15px;
+  outline: none;
+  transition: 0.25s;
+  background-color: #fafafa;
+}
+
+.email:focus,
+.password:focus {
+  border-color: #2563eb;
+  background-color: #fff;
+}
+
+/* Password Toggle Icon */
+.password-container {
+  position: relative;
+}
+
+.button-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+}
+
+/* Submit Button */
+button[type="submit"] {
+  padding: 12px;
+  background-color: #2563eb;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 8px;
+  transition: 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: #1e4fc2;
+}
+
+/* Link text */
+.login-form p {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #2563eb;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.login-form p:hover {
+  text-decoration: underline;
+}
+
+
+/* ============================= RESPONSIVE BREAKPOINTS ============================= */
+
+/* Tablets & Small Laptops */
+@media screen and (max-width: 1024px) {
+  .login-card {
+    width: 400px;
+  }
+}
+
+/* Tablets */
+@media screen and (max-width: 768px) {
+  .login-card {
+    width: 350px;
+    padding: 25px;
+  }
+  .heading-login {
+    font-size: 26px;
+  }
+}
+
+/* Large Mobile */
+@media screen and (max-width: 600px) {
+  .login-card {
+    width: 100%;
+    max-width: 330px;
+  }
+  .heading-login {
+    font-size: 24px;
+  }
+}
+
+/* Small Mobile */
+@media screen and (max-width: 480px) {
+  .login-card {
+    width: 100%;
+    max-width: 300px;
+    padding: 22px;
+  }
+  .heading-login {
+    font-size: 22px;
+  }
+}

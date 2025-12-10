@@ -1,0 +1,120 @@
+### ---------------------------
+### Register User
+### ---------------------------
+
+POST http://localhost:5000/auth/register
+Content-Type: application/json
+
+{
+  "name": "ef",
+  "email": "ef@gmail.com",
+  "password": "admin123",
+  "role": "admin"
+}
+
+
+
+### ---------------------------
+### Login
+### ---------------------------
+
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+  "email": "v@gmail.com",
+  "password": "admin123"
+}
+
+
+
+### ---------------------------
+### Token Variable (Paste after login)
+### ---------------------------
+
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJ2QGdtYWlsLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2NTI5MjQzOCwiZXhwIjoxNzY1Mjk2MDM4fQ.GE_Y5ZhQFDLGI-a_4wlQz7O7hk7ARrNPGrWPEXRl3_I
+
+### ---------------------------
+### Get All Users
+### ---------------------------
+
+GET http://localhost:5000/users
+Authorization: Bearer {{token}}
+
+
+
+### ---------------------------
+### Create User
+### ---------------------------
+
+POST http://localhost:5000/users
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Test User",
+  "email": "v4@gmail.com",
+  "password_hash": "admin123",
+  "role": "staff"
+}
+
+
+
+### ---------------------------
+### Get All Projects
+### ---------------------------
+
+GET http://localhost:5000/projects
+Authorization: Bearer {{token}}
+
+
+
+### ---------------------------
+### Create Project
+### ---------------------------
+
+POST http://localhost:5000/projects
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "NEW Building project C",
+  "budget": 50000000,
+  "spent": 40000000,
+  "progress": 25,
+  "status": "ongoing"
+}
+
+
+
+### ---------------------------
+### Update Project
+### ---------------------------
+
+PUT http://localhost:5000/projects/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "New Building Updated",
+  "budget": 600000,
+  "spent": 30000,
+  "progress": 20,
+  "status": "ongoing"
+}
+
+
+
+### ---------------------------
+### Delete Project
+### ---------------------------
+
+DELETE http://localhost:5000/projects/6
+Authorization: Bearer {{token}}
+
+
+### ---------------------------
+### Get RISK Reports
+### ---------------------------
+GET http://localhost:5000/ai/project-risk/7
+Authorization: Bearer {{token}}
