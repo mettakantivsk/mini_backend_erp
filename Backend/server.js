@@ -4,26 +4,33 @@ app.use(express.json());
 const cors = require("cors");
 app.use(cors());
 
+const fs = require("fs");
 const path = require("path");
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const dbPath = path.join(__dirname, "construction_erp.db");
+const JWT_SECRET = process.env.JWT_SECRET || "LOCAL_DEV_SECRET";
+
+const localDB = path.join(__dirname, "construction_erp.db");
+const renderDB = "/tmp/construction_erp.db";
+
+if (!fs.existsSync(renderDB)) {
+  fs.copyFileSync(localDB, renderDB);
+}
 
 let db;
 
 let startTheServer = async () => {
   try {
     db = await open({
-      filename: dbPath,
+      filename: renderDB,
       driver: sqlite3.Database,
     });
 
     const PORT = process.env.PORT || 5000;
-
-    app.listen(PORT, () => console.log("server started!!"));
+    app.listen(PORT, () => console.log("Server running on port", PORT));
   } catch (error) {
     console.log(error);
     process.exit(1);
@@ -32,205 +39,159 @@ let startTheServer = async () => {
 
 startTheServer();
 
-
 // ---------------- AUTH MIDDLEWARE ----------------
-const authenticateToken = (request, response, next) => {
-  let jwtToken;
-  const authHeader = request.headers["authorization"];
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  let jwtToken = undefined;
+
   if (authHeader !== undefined) {
     jwtToken = authHeader.split(" ")[1];
   }
+
   if (jwtToken === undefined) {
-    response.status(401);
-    response.send("Invalid JWT Token");
-  } else {
-    jwt.verify(jwtToken, "MY_SECRET_TOKEN", async (error, payload) => {
-      if (error) {
-        response.status(401);
-        response.send("Invalid JWT Token");
-      } else {
-        next();
-      }
-    });
+    return res.status(401).send("Invalid JWT Token");
   }
+
+  jwt.verify(jwtToken, JWT_SECRET, (error, payload) => {
+    if (error) {
+      return res.status(401).send("Invalid JWT Token");
+    }
+    next();
+  });
 };
 
-// ---------------- AUTH ROUTES ----------------
-app.post("/auth/register",async  (req, res) => {
+// REGISTER
+app.post("/auth/register", async (req, res) => {
   const { name, email, password, role } = req.body;
+
+  const existing = await db.get("SELECT * FROM users WHERE email = ?", [email]);
+  if (existing) {
+    return res.status(400).json({ message: "Email already exists" });
+  }
+
   const password_hash = bcrypt.hashSync(password, 10);
 
-  let userExits = await db.get(
-    `SELECT * FROM users WHERE email = ?`,
-    [email]
-  );
-  if (userExits) {
-    return res.status(200).json({ message: "Email already exists" });
-  }
-
   await db.run(
-    `INSERT INTO users (name, email, password_hash, role) VALUES (?,?,?,?)`,
-    [name, email, password_hash, role],
-    function (err) {
-      if (err) {
-        if (err.code === "SQLITE_CONSTRAINT") {
-          return res.status(200).json({ message: "Email already exists" });
-        }
-        return res.status(200).json({ error: err.message });
-      }
-
-      res.send(JSON.stringify({ message: "User registered successfully", id: this.lastID }));
-    }
+    "INSERT INTO users (name, email, password_hash, role) VALUES (?,?,?,?)",
+    [name, email, password_hash, role]
   );
+
+  res.json({ message: "User registered successfully" });
 });
 
-
+// LOGIN
 app.post("/auth/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password);
 
-  try {
-    const user = await db.get(
-      `SELECT * FROM users WHERE email = ?`,
-      [email]
-    );
-    if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
-    const isPasswordValid = bcrypt.compareSync(password, user.password_hash);
-    if (!isPasswordValid) {
-      return res.status(400).json({ message: "Invalid email or password" });
-    }
-    const payload = { id: user.id, email: user.email, role: user.role };
-    const token = jwt.sign(payload, "MY_SECRET_TOKEN", { expiresIn: "1h" });
+  const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
+  if (!user) return res.status(400).json({ message: "Invalid email or password" });
 
-    res.json({ token });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "DB error" });
-  }
-});
+  const isValid = bcrypt.compareSync(password, user.password_hash);
+  if (!isValid) return res.status(400).json({ message: "Invalid email or password" });
 
-
-// ---------------- USERS CRUD ----------------
-app.post("/users",authenticateToken, (req, res) => {
-  const { name, email, password_hash, role } = req.body;
-
-  db.run(
-    `INSERT INTO users (name, email, password_hash, role) VALUES (?,?,?,?)`,
-    [name, email, password_hash, role],
-    function (err) {
-      if (err) return res.status(400).json({ error: err.message });
-      res.json({ id: this.lastID, message: "User created" });
-    }
+  const token = jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    JWT_SECRET,
+    { expiresIn: "1h" }
   );
+
+  res.json({ token });
 });
 
-
+// USERS CRUD
 app.get("/users", authenticateToken, async (req, res) => {
-   let all_users =  await db.all(`SELECT * FROM users`);
-   res.send(JSON.stringify({users: all_users}));
+  const users = await db.all("SELECT * FROM users");
+  res.json({ users });
 });
 
 app.get("/users/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  let user = await db.get(`SELECT * FROM users WHERE id=${id}`);
-  res.send(JSON.stringify({user}));
+  const row = await db.get("SELECT * FROM users WHERE id = ?", [req.params.id]);
+  res.json({ user: row });
+});
+
+app.post("/users", authenticateToken, async (req, res) => {
+  const { name, email, password_hash, role } = req.body;
+
+  await db.run(
+    "INSERT INTO users (name, email, password_hash, role) VALUES (?,?,?,?)",
+    [name, email, password_hash, role]
+  );
+
+  res.json({ message: "User created" });
 });
 
 app.put("/users/:id", authenticateToken, async (req, res) => {
   const { name, email, role } = req.body;
 
   await db.run(
-    `UPDATE users SET name=?, email=?, role=? WHERE id=?`,
-    [name, email, role, req.params.id],
-    function (err) {
-      if (err) return res.status(400).json({ error: err.message });
-      res.json({ message: "User updated" });
-    }
+    "UPDATE users SET name=?, email=?, role=? WHERE id=?",
+    [name, email, role, req.params.id]
   );
+
+  res.json({ message: "User updated" });
 });
 
 app.delete("/users/:id", authenticateToken, async (req, res) => {
-await db.run(`DELETE FROM users WHERE id=?`, [req.params.id], function (err) {
-    if (err) return res.status(400).json({ error: err.message });
-    res.json({ message: "User deleted" });
-  });
+  await db.run("DELETE FROM users WHERE id = ?", [req.params.id]);
+  res.json({ message: "User deleted" });
 });
 
-
-// ---------------- PROJECTS CRUD ----------------
+// PROJECT CRUD
 app.post("/projects", authenticateToken, async (req, res) => {
   const { name, budget, spent, progress, status } = req.body;
 
   await db.run(
-    `INSERT INTO projects (name, budget, spent, progress, status)
-     VALUES (?,?,?,?,?)`,
-    [name, budget, spent, progress, status],
-    function (err) {
-      if (err) return res.status(400).json({ error: err.message });
-      res.send(JSON.stringify({ id: this.lastID, message: "Project created" }));
-    }
+    "INSERT INTO projects (name, budget, spent, progress, status) VALUES (?,?,?,?,?)",
+    [name, budget, spent, progress, status]
   );
+
+  res.json({ message: "Project created" });
 });
 
 app.get("/projects", authenticateToken, async (req, res) => {
-  let all_projects =  await db.all(`SELECT * FROM projects`);
-  res.send(JSON.stringify({projects: all_projects}));
+  const projects = await db.all("SELECT * FROM projects");
+  res.json({ projects });
 });
 
 app.put("/projects/:id", authenticateToken, async (req, res) => {
   const { name, budget, spent, progress, status } = req.body;
 
-   await db.run(
-    `UPDATE projects SET name=?, budget=?, spent=?, progress=?, status=? WHERE id=?`,
-    [name, budget, spent, progress, status, req.params.id],
-    function (err) {
-      if (err) return res.status(400).json({ error: err.message });
-      res.json({ message: "Project updated" });
-    }
+  await db.run(
+    "UPDATE projects SET name=?, budget=?, spent=?, progress=?, status=? WHERE id=?",
+    [name, budget, spent, progress, status, req.params.id]
   );
+
+  res.json({ message: "Project updated" });
 });
 
 app.delete("/projects/:id", authenticateToken, async (req, res) => {
-  await db.run(`DELETE FROM projects WHERE id=?`, [req.params.id], function (err) {
-    if (err) return res.status(400).json({ error: err.message });
-    res.json({ message: "Project deleted" });
-  });
+  await db.run("DELETE FROM projects WHERE id = ?", [req.params.id]);
+  res.json({ message: "Project deleted" });
 });
 
-// ---------------- AI ON RISK ANALYSIS ----------------
+// AI RISK
 app.get("/ai/project-risk/:id", authenticateToken, async (req, res) => {
-  const { id } = req.params;
-
-  const project = await db.get(`SELECT * FROM projects WHERE id = ?`, [id]);
-  console.log(project);
+  const project = await db.get("SELECT * FROM projects WHERE id = ?", [req.params.id]);
 
   if (!project) {
     return res.status(404).json({ message: "Project not found" });
   }
 
   let riskScore = 0;
-  let riskLevel = "Low";
-
   const budgetUsedPercent = (project.spent / project.budget) * 100;
 
   if (budgetUsedPercent > project.progress + 20) {
     riskScore += 50;
   }
- 
 
+  let riskLevel = "Low";
   if (riskScore > 60) riskLevel = "Critical";
   else if (riskScore > 30) riskLevel = "High";
   else riskLevel = "Medium";
 
   res.json({
     projectId: project.id,
-    budget: project.budget,
-    spent: project.spent,
-    progress: project.progress,
     risk_score: riskScore,
     risk_level: riskLevel,
   });
 });
-
